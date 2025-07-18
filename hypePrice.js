@@ -25,11 +25,11 @@ async function fetchHypePrice() {
     const data = await res.json();
     const price = parseFloat(data?.data?.bundle?.ethPriceUSD ?? 0);
     document.getElementById("hypePriceBadge").textContent =
-      `💰 Prix du $HYPE : $${price.toFixed(2)}`;
+      `$HYPE price: $${price.toFixed(2)}`;
   } catch (err) {
     console.error("Erreur fetch $HYPE :", err);
     document.getElementById("hypePriceBadge").textContent =
-      `💰 Prix du $HYPE : erreur`;
+      `$HYPE price: erreur`;
   }
 }
 fetchHypePrice();
