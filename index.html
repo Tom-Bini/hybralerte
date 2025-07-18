@@ -9,12 +9,31 @@
   <h1>LP Range Alert</h1>
   <input id="wallet" type="text" placeholder="Adresse du wallet" />
   <button onclick="startMonitoring()">Start</button>
+  <div id="points" style="margin-top: 10px; font-size: 1.1em;"></div>
   <pre id="log"></pre>
 
   <audio id="alertSound" src="sound_effect.mp3" preload="auto"></audio>
 
   <script>
     const API_URL = "https://api.goldsky.com/api/public/project_cmbj707z4cd9901sib1f6cu0c/subgraphs/hybra-v3/v3/gn";
+    async function fetchPoints(wallet) {
+    const res = await fetch(`https://server.hybra.finance/api/points/user/${wallet}`, {
+        headers: {
+        "Accept": "*/*",
+        "Origin": "https://www.hybra.finance",
+        "Referer": "https://www.hybra.finance/",
+        },
+    });
+
+    if (!res.ok) {
+        document.getElementById("points").textContent = "⚠️ Erreur lors du chargement des points";
+        return;
+    }
+
+    const data = await res.json();
+    const points = data?.data?.totalPoints ?? 0;
+    document.getElementById("points").textContent = `Points : ${points.toLocaleString()}`;
+    }
 
     async function fetchPositions(wallet) {
       const payload = {
@@ -55,8 +74,27 @@
       document.getElementById("log").textContent += text + "\n";
     }
 
+    function scheduleHourlyPointsUpdate(wallet) {
+        async function fetchAndScheduleNext() {
+            await fetchPoints(wallet);
+
+            const now = new Date();
+            const next = new Date(now);
+            next.setHours(now.getHours() + 1);
+            next.setMinutes(16);
+            next.setSeconds(0);
+            next.setMilliseconds(0);
+
+            const delay = next - now;
+            setTimeout(fetchAndScheduleNext, delay);
+        }
+
+        fetchAndScheduleNext();
+    }
+
     async function startMonitoring() {
       const wallet = document.getElementById("wallet").value.trim();
+      scheduleHourlyPointsUpdate(wallet);
       const sound = document.getElementById("alertSound");
 
       if (!wallet) {
