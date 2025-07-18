@@ -31,3 +31,15 @@ h1 {
 #poolTable th {
   background-color: #f0f0f0;
 }
+
+#hypePriceBadge {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #fff;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}

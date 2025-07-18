@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Hybra LP Range Checker</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div id="container">
-    <!-- Colonne gauche : LP checker -->
-    <div id="left">
-      <h1>LP Range Alert</h1>
-      <input id="wallet" type="text" placeholder="Wallet Adress" />
-      <button onclick="startMonitoring()">Start</button>
-      <div id="points" style="margin-top: 10px; font-size: 1.1em;"></div>
-      <pre id="log"></pre>
-      <audio id="alertSound" src="sound_effect.mp3" preload="auto"></audio>
+    <div id="hypePriceBadge">$HYPE price : ...</div>
+    <div id="container">
+        <!-- Colonne gauche : LP checker -->
+        <div id="left">
+            <h1>LP Range Alert</h1>
+            <input id="wallet" type="text" placeholder="Wallet Address" />
+            <button onclick="startMonitoring()">Start</button>
+            <div id="points" style="margin-top: 10px; font-size: 1.1em;"></div>
+            <pre id="log"></pre>
+            <audio id="alertSound" src="sound_effect.mp3" preload="auto"></audio>
+        </div>
+
+        <!-- Colonne droite : classement des pools -->
+        <div id="right">
+            <h2>Most profitable pools in points</h2>
+            <p id="lastUpdate" style="font-style: italic; font-size: 0.9em;"></p>
+            <table id="poolTable">
+                <thead>
+                    <tr>
+                        <th>Pair</th>
+                        <th>Boost</th>
+                        <th>TVL ($)</th>
+                        <th>Ratio (×10⁻⁶)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Colonne droite : classement des pools -->
-    <div id="right">
-      <h2>Most profitable pools in points</h2>
-      <p id="lastUpdate" style="font-style: italic; font-size: 0.9em;"></p>
-      <table id="poolTable">
-        <thead>
-          <tr>
-            <th>Pair</th>
-            <th>Boost</th>
-            <th>TVL ($)</th>
-            <th>Ratio (×10⁻⁶)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
 
-
-  <script src="trackPools.js"></script>
-  <script src="rankPools.js"></script>
+    <script src="trackPools.js"></script>
+    <script src="rankPools.js"></script>
+    <script src="hypePrice.js"></script>
 </body>
+
 </html>
