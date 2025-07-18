@@ -6,3 +6,28 @@
 h1 {
     font-size: 1.4rem;
 }
+
+#container {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+#left, #right {
+  flex: 1;
+}
+
+#poolTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#poolTable th, #poolTable td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: left;
+}
+
+#poolTable th {
+  background-color: #f0f0f0;
+}
