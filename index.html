@@ -24,6 +24,15 @@
         <div id="right">
             <h2>Most profitable pools in points</h2>
             <p id="lastUpdate" style="font-style: italic; font-size: 0.9em;"></p>
+            <div id="rangeButtons" style="margin-bottom: 10px;">
+                <button onclick="setRange(null)">Full</button>
+                <button onclick="setRange(30)">±30%</button>
+                <button onclick="setRange(10)">±10%</button>
+                <button onclick="setRange(5)">±5%</button>
+                <button onclick="setRange(2)">±2%</button>
+                <button onclick="setRange(1)">±1%</button>
+                <button onclick="setRange(0.5)">±0.5%</button>
+            </div>
             <table id="poolTable">
                 <thead>
                     <tr>
@@ -42,6 +51,7 @@
     <script src="trackPools.js"></script>
     <script src="rankPools.js"></script>
     <script src="hypePrice.js"></script>
+    <script src="rangeSwitcher.js"></script>
 </body>
 
 </html>
