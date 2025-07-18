@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Hybra LP Range Checker</title>
+    <title>Hybralerte</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -33,6 +33,7 @@
                 <button onclick="setRange(1)">±1%</button>
                 <button onclick="setRange(0.5)">±0.5%</button>
             </div>
+            <p style="font-style: italic; font-size: 0.9em;">Size of range for being considered as "Active TVL"</p>
             <table id="poolTable">
                 <thead>
                     <tr>
@@ -49,9 +50,9 @@
 
 
     <script src="trackPools.js"></script>
+    <script src="rangeSwitcher.js"></script>
     <script src="rankPools.js"></script>
     <script src="hypePrice.js"></script>
-    <script src="rangeSwitcher.js"></script>
 </body>
 
 </html>
