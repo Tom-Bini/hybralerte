@@ -59,9 +59,85 @@ h1 {
   font-weight: bold;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   z-index: 1000;
-  transition: background-color 0.2s ease;
 }
 
 #supportButton:hover {
   background-color: #bfbfbf;
+}
+
+#floatingButtons {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    z-index: 999;
+}
+
+#floatingButtons button {
+    background-color: white;
+    color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#floatingButtons button:hover {
+    background-color: #bfbfbf;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+body.dark-mode table, body.dark-mode th, body.dark-mode td {
+    border-color: #444;
+    color: white;
+}
+
+body.dark-mode #floatingButtons button {
+    background-color: #333;
+}
+
+#floatingButtons button i {
+    transition: color 0.3s;
+    color: black; /* par défaut = light mode */
+}
+
+body.dark-mode #floatingButtons button i {
+    color: white;
+}
+
+body.dark-mode #supportButton {
+  background-color: #333;
+  color: white;
+  border: 1px solid #66aaff;
+}
+
+body.dark-mode #supportButton:hover {
+  background-color: #444;
+}
+
+body.dark-mode #hypePriceBadge {
+  background-color: #333;
+  color: white;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode #poolTable th {
+  background-color: #f0f0f0;
+  color: black;
+}
+
+body.dark-mode a {
+  color: #66aaff;
+}
+
+body.dark-mode a:visited {
+  color: #66aaff;
 }
