@@ -141,3 +141,9 @@ body.dark-mode a {
 body.dark-mode a:visited {
   color: #66aaff;
 }
+
+#hypeLogo {
+  width: 1rem;
+  height: 1rem;
+  vertical-align: middle;
+}
