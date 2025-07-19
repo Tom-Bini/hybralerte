@@ -2,6 +2,17 @@
 <html lang="en">
 
 <head>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFP3ZSVGBB"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZFP3ZSVGBB');
+    </script>
+
     <meta charset="UTF-8">
     <title>Hybralerte</title>
     <link rel="stylesheet" href="style.css">
@@ -27,7 +38,8 @@
         <!-- Colonne droite : classement des pools -->
         <div id="right">
             <h1>Ranking : Boost / Active TVL</h1>
-            <p style="font-style: italic; font-size: 0.9em;">Not perfectly accurate, but built with the best data I can get.</p>
+            <p style="font-style: italic; font-size: 0.9em;">Not perfectly accurate, but built with the best data I can
+                get.</p>
             <p id="lastUpdate" style="font-style: italic; font-size: 0.9em;"></p>
             <div id="rangeButtons" style="margin-bottom: 10px;">
                 <button onclick="setRange(null)">Full</button>
