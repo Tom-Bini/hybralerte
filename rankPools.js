@@ -122,11 +122,16 @@ async function updatePoolsTable() {
         const tvl = rangePercent ? p.effectiveTVL : p.tvlUSD;
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td><a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank">${p.symbol}</a></td>
-      <td>${p.boost}</td>
-      <td>${tvl.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-      <td>${(p.score * 1e6).toFixed(2)}</td>
-    `;
+            <td>
+                <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank">
+                ${p.symbol}
+                </a>
+                <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" style="margin-left: 8px; font-size: 0.9em; color: blue;">Chart</a>
+            </td>
+            <td>${p.boost}</td>
+            <td>${tvl.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+            <td>${(p.score * 1e6).toFixed(2)}</td>
+            `;
         tbody.appendChild(row);
     });
 
