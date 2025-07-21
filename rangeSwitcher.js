@@ -1,12 +1,19 @@
-// rangeSwitcher.js
-
-let currentRangePercent = null; // null = Full range
+let currentRangePercent = null;
 
 function setRange(percent) {
-  currentRangePercent = percent;
-  updatePoolsTable(); // fournie par rankPools.js
+    currentRangePercent = percent;
+    updatePoolsTable();
+
+    const label = document.getElementById("selectedRangeLabel");
+    if (label) {
+        if (percent === null) {
+            label.textContent = "Ranking based on full TVL (no range filter)";
+        } else {
+            label.textContent = `Ranking based on TVL in ±${percent}% range`;
+        }
+    }
 }
 
 function getCurrentRangePercent() {
-  return currentRangePercent;
+    return currentRangePercent;
 }
