@@ -23,13 +23,24 @@ async function updatePoolsTable() {
           feeTier
           totalValueLockedUSD
           tick
+          sqrtPrice
           ticks(first: 1000) {
             tickIdx
             liquidityGross
+            liquidityNet
           }
         }
       }
     `
+    };
+
+    // Helpers
+    const getPriceFromSqrtPriceX96 = (sqrtX96) => {
+        return (parseFloat(sqrtX96) / (2 ** 96)) ** 2;
+    };
+
+    const getTickFromPrice = (price) => {
+        return Math.floor(Math.log(price) / Math.log(1.0001));
     };
 
     const [res1, res2] = await Promise.all([
@@ -52,50 +63,55 @@ async function updatePoolsTable() {
     ]);
 
     const data1 = await res1.json();
-    console.log("📦 GraphQL data:", data1);
     const pools = data1?.data?.pools || [];
     const boosts = await res2.json();
-    console.log("📦 Boosts data:", boosts);
 
     const mergedPools = pools.map(pool => {
         const boostEntry = boosts.find(b => b.poolAddress.toLowerCase() === pool.id.toLowerCase());
         const boost = boostEntry?.pointsBoost ?? 0;
         const tvlUSD = parseFloat(pool.totalValueLockedUSD);
-        const currentTick = parseInt(pool.tick);
         const ticks = pool.ticks ?? [];
 
-        // Si plage définie, calcule la proportion de liquidityGross dans la range
-        let effectiveTVL = tvlUSD;
+        let proportion = 1;
 
-        if (rangePercent) {
-            const tickRange = Math.round(Math.abs(currentTick) * (rangePercent / 100));
-            const tickMin = currentTick - tickRange;
-            const tickMax = currentTick + tickRange;
+        if (rangePercent && pool.sqrtPrice) {
+            const price = getPriceFromSqrtPriceX96(pool.sqrtPrice);
+            const minPrice = price * (1 - rangePercent / 100);
+            const maxPrice = price * (1 + rangePercent / 100);
+            const tickMin = getTickFromPrice(minPrice);
+            const tickMax = getTickFromPrice(maxPrice);
 
-            const liqInRange = ticks
-                .filter(t => {
-                    const tickIdx = parseInt(t.tickIdx);
-                    return tickIdx >= tickMin && tickIdx <= tickMax;
-                })
-                .reduce((sum, t) => sum + parseFloat(t.liquidityGross || 0), 0);
+            // On suppose maintenant que `liquidityNet` est bien présent dans les ticks
+            const sortedTicks = [...ticks].sort((a, b) => parseInt(a.tickIdx) - parseInt(b.tickIdx));
 
-            const liqTotal = ticks
-                .reduce((sum, t) => sum + parseFloat(t.liquidityGross || 0), 0);
+            let activeLiquidity = 0;
+            let liqInRange = 0;
+            let liqTotal = 0;
 
-            const proportion = liqTotal > 0 ? liqInRange / liqTotal : 0;
-            effectiveTVL = tvlUSD * proportion;
+            for (const tick of sortedTicks) {
+                const tickIdx = parseInt(tick.tickIdx);
+                const liqNet = parseFloat(tick.liquidityNet ?? 0);  // <= il faut que ta requête GraphQL inclue ce champ maintenant
+                activeLiquidity += liqNet;
+
+                const liqAbs = Math.abs(activeLiquidity);
+                liqTotal += liqAbs;
+
+                if (tickIdx >= tickMin && tickIdx <= tickMax) {
+                    liqInRange += liqAbs;
+                }
+            }
+
+            proportion = liqTotal > 0 ? liqInRange / liqTotal : 0;
         }
 
+
+        const effectiveTVL = tvlUSD * proportion;
         const score = effectiveTVL > 0 ? boost / effectiveTVL : 0;
 
         const token0Addr = boostEntry?.token0Address;
         const token1Addr = boostEntry?.token1Address;
         const protocolType = boostEntry?.protocolType ?? "v3";
         const fee = boostEntry?.feeTier;
-
-        const poolUrl = token0Addr && token1Addr && fee
-            ? `https://www.hybra.finance/liquidity/add?token0=${token0Addr}&token1=${token1Addr}&fee=${fee}&type=${protocolType}`
-            : null;
 
         return {
             id: pool.id,
@@ -104,10 +120,11 @@ async function updatePoolsTable() {
             tvlUSD,
             boost,
             effectiveTVL,
+            tvlRatio: proportion,
             score,
-            token0Address: boostEntry?.token0Address,
-            token1Address: boostEntry?.token1Address,
-            protocolType: boostEntry?.protocolType
+            token0Address: token0Addr,
+            token1Address: token1Addr,
+            protocolType
         };
     });
 
@@ -118,26 +135,26 @@ async function updatePoolsTable() {
     const tbody = document.querySelector("#poolTable tbody");
     tbody.innerHTML = "";
 
-    ranked.forEach(p => {
-        const tvl = rangePercent ? p.effectiveTVL : p.tvlUSD;
+    ranked.forEach((p, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
+            <td>${index + 1}</td>
             <td>
-                <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank">
-                ${p.symbol}
-                </a>
+                <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank">${p.symbol}</a>
                 <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" style="margin-left: 8px; font-size: 0.9em; color: blue;">Chart</a>
             </td>
             <td>${p.boost}</td>
-            <td>${tvl.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+            <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+            <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
             <td>${(p.score * 1e6).toFixed(2)}</td>
-            `;
+        `;
         tbody.appendChild(row);
     });
 
     document.getElementById("lastUpdate").textContent =
         "Last update : " + new Date().toLocaleTimeString();
 }
+
 
 // Appels initiaux
 updatePoolsTable();
