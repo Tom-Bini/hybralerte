@@ -128,9 +128,15 @@ async function updatePoolsTable() {
         };
     });
 
+    const excludeLowTVL = document.getElementById("excludeLowTVL").checked;
+
     const ranked = mergedPools
-        .filter(p => p.score > 0)
+        .filter(p => {
+            const passesTVL = !excludeLowTVL || p.tvlUSD >= 50000;
+            return passesTVL && p.score > 0;
+        })
         .sort((a, b) => b.score - a.score);
+
 
     const tbody = document.querySelector("#poolTable tbody");
     tbody.innerHTML = "";

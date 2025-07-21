@@ -43,6 +43,9 @@
                 <button onclick="setRange(2)">±2%</button>
                 <button onclick="setRange(1)">±1%</button>
                 <button onclick="setRange(0.5)">±0.5%</button>
+                <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.95em;">
+                    <input type="checkbox" id="excludeLowTVL" onchange="updatePoolsTable()" checked>
+                    Exclude TVL < 50k$ </label>
             </div>
             <p style="font-style: italic; font-size: 0.9em;">Size of range for being considered as "Active TVL"</p>
             <table id="poolTable">
