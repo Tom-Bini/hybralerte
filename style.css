@@ -427,26 +427,31 @@ button:hover {
 }
 
 .position-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
+  background-color: var(--accent-green);
+  color: black;
   padding: 6px 12px;
   font-size: 0.85rem;
   font-weight: 600;
-  background-color: var(--accent-green);
-  color: black;
   border: none;
   border-radius: 8px;
   text-decoration: none;
-  z-index: 1;
-  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: text-decoration 0.2s ease;
+  outline: none;
+  box-shadow: none;
 }
 
-.position-btn:hover {
+.position-btn:hover,
+.position-btn:focus,
+.position-btn:focus-visible,
+.position-btn:focus-within {
   background-color: var(--accent-green);
   color: black;
   text-decoration: underline;
+  outline: none;
+  box-shadow: none;
 }
 
 #poolTable tbody tr:nth-child(even) {
