@@ -446,6 +446,7 @@ button:hover {
 .position-btn:hover {
   background-color: var(--accent-green);
   color: black;
+  text-decoration: underline;
 }
 
 #poolTable tbody tr:nth-child(even) {
