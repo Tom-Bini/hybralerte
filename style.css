@@ -451,3 +451,7 @@ button:hover {
 #poolTable tbody tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.03); /* léger contraste en dark mode */
 }
+
+#selectedRangeLabel {
+  text-align: center;
+}

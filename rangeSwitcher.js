@@ -17,3 +17,5 @@ function setRange(percent) {
 function getCurrentRangePercent() {
     return currentRangePercent;
 }
+
+document.getElementById("selectedRangeLabel").textContent = "Ranking based on full TVL (no range filter)";
