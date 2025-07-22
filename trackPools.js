@@ -92,7 +92,7 @@ async function startMonitoring() {
     positionsContainer.innerHTML = `<div style='font-weight:bold;margin-bottom:8px;'>Last update : ${now}</div>`;
 
     if (positions.length === 0) {
-      positionsContainer.innerHTML += `<div class='no-position'>Aucune position trouvée</div>`;
+      positionsContainer.innerHTML += `<div class='no-position'>No position found</div>`;
       return;
     }
 
