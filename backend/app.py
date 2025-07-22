@@ -1,40 +1,29 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 import sqlite3
-import os
+from flask_cors import CORS
 
 app = Flask(__name__)
-DB_FILE = "wallets.db"
 
-def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS addresses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            address TEXT UNIQUE
-        )
-    """)
+CORS(app)
+
+@app.route('/api/submit', methods=['POST'])
+def submit():
+    data = request.get_json()
+    wallet = data.get('wallet', '').strip().lower()
+
+    if not wallet:
+        return {"error": "missing address"}, 400
+
+    conn = sqlite3.connect('wallets.db')
+    c = conn.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS wallets (address TEXT PRIMARY KEY)")
+    try:
+        c.execute("INSERT INTO wallets (address) VALUES (?)", (wallet,))
+    except sqlite3.IntegrityError:
+        pass
     conn.commit()
     conn.close()
-
-@app.route("/submit_address", methods=["POST"])
-def submit_address():
-    data = request.get_json()
-    address = data.get("address", "").lower()
-
-    if not address.startswith("0x") or len(address) != 42:
-        return jsonify({"status": "error", "message": "Invalid address"}), 400
-
-    try:
-        conn = sqlite3.connect(DB_FILE)
-        cursor = conn.cursor()
-        cursor.execute("INSERT OR IGNORE INTO addresses (address) VALUES (?)", (address,))
-        conn.commit()
-        conn.close()
-        return jsonify({"status": "ok", "message": "Address stored"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-if __name__ == "__main__":
-    init_db()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    return {"success": True}
+    
+if __name__ == '__main__':
+    app.run(debug=True)
