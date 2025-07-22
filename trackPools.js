@@ -125,6 +125,9 @@ async function startMonitoring() {
           <div class="segment red"></div>
           <div class="cursor" style="left: ${Math.max(0, Math.min(10 + (percentage * 0.8), 120))}%"></div>
         </div>
+        <a href="https://www.hybra.finance/liquidity/manage/${poolId}" target="_blank" class="position-btn">
+          Position
+        </a>
       `;
       positionsContainer.appendChild(card);
       if (!inRange || (warnNear && nearOut)) {

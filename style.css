@@ -55,8 +55,6 @@ h1 {
 #poolTable {
   width: 100%;
   border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
   background-color: var(--bg-card);
 }
 
@@ -426,4 +424,30 @@ button:hover {
   border-radius: 2px;
   transition: left 0.3s ease;
   z-index: 2;
+}
+
+.position-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: var(--accent-green);
+  color: black;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  z-index: 1;
+  position: relative;
+}
+
+.position-btn:hover {
+  background-color: var(--accent-green-hover);
+  color: black;
+}
+
+#poolTable tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03); /* léger contraste en dark mode */
 }
