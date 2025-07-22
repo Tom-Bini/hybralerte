@@ -28,7 +28,7 @@ a, a:visited {
 }
 
 a:hover {
-  color: var(--accent-green-hover);
+  color: var(--accent-green);
   text-decoration: underline;
 }
 
@@ -444,7 +444,7 @@ button:hover {
 }
 
 .position-btn:hover {
-  background-color: var(--accent-green-hover);
+  background-color: var(--accent-green);
   color: black;
 }
 
