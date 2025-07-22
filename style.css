@@ -444,6 +444,7 @@ button:hover {
   -webkit-appearance: none;
   outline: none;
   box-shadow: none;
+  margin-top: 5px;
 }
 
 .position-btn:hover,
