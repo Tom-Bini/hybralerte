@@ -22,10 +22,20 @@
         <!-- Colonne gauche : LP checker -->
         <div id="left">
             <h1>LP Range Alert</h1>
-            <input id="wallet" type="text" placeholder="Wallet Address" />
-            <button onclick="startMonitoring()">Start</button>
+            <div class="wallet-input-group">
+                <input id="wallet" type="text" placeholder="Wallet Address" />
+                <button onclick="startMonitoring()">Start</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px; margin-top: 10px;">
+                <span class="switch-label">Alert : Out of range</span>
+                <label class="switch">
+                    <input type="checkbox" id="warnNearRange">
+                    <span class="slider"></span>
+                </label>
+                <span class="switch-label">Near out of range (10%)</span>
+            </div>
             <div id="points" style="margin-top: 10px; font-size: 1.1em;"></div>
-            <pre id="log"></pre>
+            <div id="positions"></div>
             <audio id="alertSound" src="sound_effect.mp3" preload="auto"></audio>
         </div>
 
@@ -43,20 +53,22 @@
                 <button onclick="setRange(2)">±2%</button>
                 <button onclick="setRange(1)">±1%</button>
                 <button onclick="setRange(0.5)">±0.5%</button>
-                <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.95em;">
+                <label class="switch">
                     <input type="checkbox" id="excludeLowTVL" onchange="updatePoolsTable()" checked>
-                    Exclude TVL < 50k$ </label>
+                    <span class="slider"></span>
+                </label>
+                <span class="switch-label">Exclude TVL &lt; 50k$</span>
             </div>
             <p style="font-style: italic; font-size: 0.9em;">Size of range for being considered as "Active TVL"</p>
             <table id="poolTable">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Pair</th>
-                        <th>Boost</th>
-                        <th>TVL ($)</th>
-                        <th>TVL in range (%)</th>
-                        <th>Ratio (×10⁻⁶)</th>
+                        <th style="width: 2.5rem;">#</th>
+                        <th class="col-pair">Pair</th>
+                        <th class="col-boost">Boost</th>
+                        <th class="col-tvl">TVL ($)</th>
+                        <th class="col-inrange">TVL in range (%)</th>
+                        <th class="col-ratio">Ratio (×10⁻⁶)</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -65,8 +77,8 @@
     </div>
     <!-- Boutons flottants -->
     <div id="floatingButtons">
-        <button id="toggleThemeBtn"><i class="fa-solid fa-moon"></i></button>
-        <button id="toggleSoundBtn"><i class="fa-solid fa-volume-high"></i></button>
+
+
     </div>
     <a href="support.html" id="supportButton" target="_blank">Support Me !</a>
 

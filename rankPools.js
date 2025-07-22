@@ -145,15 +145,18 @@ async function updatePoolsTable() {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>
-                <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank">${p.symbol}</a>
-                <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" style="margin-left: 8px; font-size: 0.9em; color: blue;">Chart</a>
+            <td class="pair-cell">
+                <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank" class="pair-name">${p.symbol}</a>
+                <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" class="chart-link">
+                <img src="dexscreener-icon.png" alt="Chart" class="chart-icon" />
+                </a>
             </td>
             <td>${p.boost}</td>
             <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
             <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
             <td>${(p.score * 1e6).toFixed(2)}</td>
-        `;
+            `;
+
         tbody.appendChild(row);
     });
 
