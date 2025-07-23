@@ -34,6 +34,7 @@ async function fetchPoints(wallet) {
 }
 
 async function fetchAndDrawHistory(wallet) {
+  console.log("⏳ fetchAndDrawHistory appelée avec : ", wallet);
   const res = await fetch(`/api/points-history/${wallet}`);
   const history = await res.json();
 
