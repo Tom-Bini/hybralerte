@@ -1,19 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const input = document.querySelector("#wallet"); // adapte si ton champ a un autre ID
-
+    const input = document.querySelector("#wallet");
     if (!input) return;
 
     input.addEventListener("change", async () => {
         const address = input.value.trim();
 
-        // Validation de base
         if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
             console.log("Adresse EVM invalide");
             return;
         }
 
         try {
-            const res = await fetch("http://localhost:5000/submit-address", {
+            const res = await fetch("https://api.hybralerte.rouplou.dev/api/submit", { // adapte l'URL à ton backend
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
