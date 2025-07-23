@@ -64,6 +64,7 @@ async function fetchAndDrawHistory(wallet) {
       }]
     },
     options: {
+      responsive: true,
       scales: {
         y: {
           beginAtZero: false
