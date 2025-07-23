@@ -7,7 +7,12 @@ import os
 app = Flask(__name__)
 CORS(app, origins=["https://hybralerte.rouplou.dev"])  # Sécurise le CORS
 
-DB_PATH = 'wallets.db'
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wallets.db")
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    return conn
 
 @app.route('/api/submit', methods=['POST'])
 def submit():
@@ -20,7 +25,7 @@ def submit():
 
     timestamp = datetime.now(timezone.utc).isoformat()
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     c = conn.cursor()
     c.execute("""
         CREATE TABLE IF NOT EXISTS wallets (
@@ -33,19 +38,14 @@ def submit():
         print(f"[+] New address stored: {address} at {timestamp}")
     except sqlite3.IntegrityError:
         print(f"[=] Address already present: {address}")
-        pass
     conn.commit()
     conn.close()
     return jsonify({"success": True})
 
+
 @app.route('/api/points-diff/<address>')
 def points_diff(address):
-    import sqlite3
-    from flask import jsonify
-    from datetime import datetime
-
-    DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wallets.db")
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     c = conn.cursor()
     c.execute("""
         SELECT total_points, timestamp FROM wallet_stats
@@ -63,14 +63,10 @@ def points_diff(address):
     diff = latest - previous
     return jsonify({"diff": diff})
 
+
 @app.route('/api/points-history/<address>')
 def points_history(address):
-    import sqlite3
-    import os
-    from flask import jsonify
-
-    DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wallets.db")
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     c = conn.cursor()
     c.execute("""
         SELECT total_points, timestamp FROM wallet_stats
