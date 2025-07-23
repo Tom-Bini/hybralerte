@@ -42,7 +42,10 @@ async function fetchAndDrawHistory(wallet) {
   const data = history.map(entry => entry.points);
 
   const ctx = document.getElementById('pointsChart').getContext('2d');
-  if (window.pointsChart) window.pointsChart.destroy(); // clear previous chart
+  if (window.pointsChart && typeof window.pointsChart.destroy === 'function') {
+    window.pointsChart.destroy();
+  }
+
 
   window.pointsChart = new Chart(ctx, {
     type: 'line',
