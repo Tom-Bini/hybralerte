@@ -46,6 +46,17 @@ def main():
 
     conn.commit()
     conn.close()
+    
+
+def fix_permissions():
+    try:
+        os.chown(DB_PATH, 33, 33)  # www-data uid/gid souvent = 33
+        os.chmod(DB_PATH, 0o664)
+        print("🛠️ Permissions corrigées.")
+    except Exception as e:
+        print(f"⚠️ Impossible de changer les permissions : {e}")
+
 
 if __name__ == "__main__":
     main()
+    fix_permissions()
