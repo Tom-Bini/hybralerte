@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 from datetime import datetime, timezone
+import os
 
 app = Flask(__name__)
 CORS(app, origins=["https://hybralerte.rouplou.dev"])  # Sécurise le CORS
@@ -36,6 +37,32 @@ def submit():
     conn.commit()
     conn.close()
     return jsonify({"success": True})
+
+@app.route('/api/points-diff/<address>')
+def points_diff(address):
+    import sqlite3
+    from flask import jsonify
+    from datetime import datetime
+
+    DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wallets.db")
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        SELECT total_points, timestamp FROM wallet_stats
+        WHERE address = ?
+        ORDER BY timestamp DESC
+        LIMIT 2
+    """, (address.lower(),))
+    rows = c.fetchall()
+    conn.close()
+
+    if len(rows) < 2:
+        return jsonify({"diff": None})  # Pas de diff possible
+
+    latest, previous = rows[0][0], rows[1][0]
+    diff = latest - previous
+    return jsonify({"diff": diff})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
