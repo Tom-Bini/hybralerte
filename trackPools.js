@@ -38,7 +38,11 @@ async function fetchAndDrawHistory(wallet) {
   const res = await fetch(`/api/points-history/${wallet}`);
   const history = await res.json();
 
-  const labels = history.map(entry => new Date(entry.timestamp).toLocaleString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
+  const labels = history.map(entry => {
+    const d = new Date(entry.timestamp);
+    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:00`;
+  });
+
   const data = history.map(entry => entry.points);
 
   const ctx = document.getElementById('pointsChart').getContext('2d');
