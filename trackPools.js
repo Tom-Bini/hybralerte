@@ -73,6 +73,45 @@ async function fetchAndDrawHistory(wallet) {
   });
 }
 
+async function fetchAndDrawRankHistory(wallet) {
+  const res = await fetch(`/api/rank-history/${wallet}`);
+  const history = await res.json();
+
+  const labels = history.map(entry => {
+    const d = new Date(entry.timestamp);
+    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:00`;
+  });
+
+  const data = history.map(entry => entry.rank);
+
+  const ctx = document.getElementById('rankChart').getContext('2d');
+  if (window.rankChart && typeof window.rankChart.destroy === 'function') {
+    window.rankChart.destroy();
+  }
+
+  window.rankChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Rank',
+        data,
+        fill: false,
+        borderColor: '#3B82F6',
+        tension: 0.1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          reverse: true, // car un meilleur rank = valeur plus basse
+          beginAtZero: false
+        }
+      }
+    }
+  });
+}
+
 
 async function fetchPositions(wallet) {
   const payload = {
@@ -135,6 +174,7 @@ async function startMonitoring() {
   const wallet = document.getElementById("wallet").value.trim();
   scheduleHourlyPointsUpdate(wallet);
   fetchAndDrawHistory(wallet);
+  fetchAndDrawRankHistory(wallet);
   const sound = document.getElementById("alertSound");
 
   if (!wallet) {

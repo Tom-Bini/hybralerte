@@ -79,6 +79,22 @@ def points_history(address):
     history = [{"timestamp": ts, "points": pts} for pts, ts in rows]
     return jsonify(history)
 
+@app.route('/api/rank-history/<address>')
+def rank_history(address):
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT rank, timestamp FROM wallet_stats
+        WHERE address = ?
+        ORDER BY timestamp ASC
+    """, (address.lower(),))
+    rows = c.fetchall()
+    conn.close()
+
+    history = [{"timestamp": ts, "rank": rk} for rk, ts in rows]
+    return jsonify(history)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
