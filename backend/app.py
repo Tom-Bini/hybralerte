@@ -10,6 +10,7 @@ DB_PATH = 'wallets.db'
 
 @app.route('/api/submit', methods=['POST'])
 def submit():
+    print("🚨 Requête reçue sur /api/submit")
     data = request.get_json()
     address = data.get('address', '').strip().lower()
 
