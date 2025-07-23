@@ -164,6 +164,48 @@ async function updatePoolsTable() {
         "Last update : " + new Date().toLocaleTimeString();
 }
 
+async function fetchAndDrawTop1000History() {
+    try {
+        const res = await fetch("/api/top1000-history");
+        const history = await res.json();
+
+        const labels = history.map(entry =>
+            new Date(entry.timestamp).toLocaleString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+        );
+        const data = history.map(entry => entry.points);
+
+        const ctx = document.getElementById('top1000Chart').getContext('2d');
+
+        if (window.top1000Chart && typeof window.top1000Chart.destroy === 'function') {
+            window.top1000Chart.destroy();
+        }
+
+        window.top1000Chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Points cumulés du top 1000',
+                    data,
+                    borderColor: 'green',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+    } catch (err) {
+        console.error("Erreur fetch top1000History :", err);
+    }
+}
+
+fetchAndDrawTop1000History();
+setInterval(fetchAndDrawTop1000History, 60 * 60 * 1000); // maj toutes les heures
+
 
 // Appels initiaux
 updatePoolsTable();

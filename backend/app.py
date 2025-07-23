@@ -94,6 +94,13 @@ def rank_history(address):
     history = [{"timestamp": ts, "rank": rk} for rk, ts in rows]
     return jsonify(history)
 
+@app.route("/api/top1000-history")
+def top1000_history():
+    conn = get_db_connection()
+    rows = conn.execute("SELECT timestamp, total_points FROM top_1000_history ORDER BY timestamp").fetchall()
+    conn.close()
+    return jsonify([{"timestamp": row["timestamp"], "points": row["total_points"]} for row in rows])
+
 
 
 if __name__ == '__main__':
