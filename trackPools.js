@@ -1,4 +1,5 @@
 const API_URL = "https://api.goldsky.com/api/public/project_cmbj707z4cd9901sib1f6cu0c/subgraphs/hybra-v3/v3/gn";
+
 async function fetchPoints(wallet) {
   const res = await fetch(`https://server.hybra.finance/api/points/user/${wallet}`, {
     headers: {
@@ -31,6 +32,39 @@ async function fetchPoints(wallet) {
     document.getElementById("points").textContent = `Points : ${points.toLocaleString()} (diff. err)`;
   }
 }
+
+async function fetchAndDrawHistory(wallet) {
+  const res = await fetch(`/api/points-history/${wallet}`);
+  const history = await res.json();
+
+  const labels = history.map(entry => new Date(entry.timestamp).toLocaleString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
+  const data = history.map(entry => entry.points);
+
+  const ctx = document.getElementById('pointsChart').getContext('2d');
+  if (window.pointsChart) window.pointsChart.destroy(); // clear previous chart
+
+  window.pointsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Points',
+        data,
+        fill: false,
+        borderColor: 'blue',
+        tension: 0.1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
+  });
+}
+
 
 async function fetchPositions(wallet) {
   const payload = {
@@ -92,6 +126,7 @@ function scheduleHourlyPointsUpdate(wallet) {
 async function startMonitoring() {
   const wallet = document.getElementById("wallet").value.trim();
   scheduleHourlyPointsUpdate(wallet);
+  fetchAndDrawHistory(wallet);
   const sound = document.getElementById("alertSound");
 
   if (!wallet) {

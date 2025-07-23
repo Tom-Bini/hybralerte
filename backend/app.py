@@ -63,6 +63,26 @@ def points_diff(address):
     diff = latest - previous
     return jsonify({"diff": diff})
 
+@app.route('/api/points-history/<address>')
+def points_history(address):
+    import sqlite3
+    import os
+    from flask import jsonify
+
+    DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wallets.db")
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        SELECT total_points, timestamp FROM wallet_stats
+        WHERE address = ?
+        ORDER BY timestamp ASC
+    """, (address.lower(),))
+    rows = c.fetchall()
+    conn.close()
+
+    history = [{"timestamp": ts, "points": pts} for pts, ts in rows]
+    return jsonify(history)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
