@@ -15,7 +15,21 @@ async function fetchPoints(wallet) {
 
   const data = await res.json();
   const points = data?.data?.totalPoints ?? 0;
-  document.getElementById("points").textContent = `Points : ${points.toLocaleString()}`;
+
+  // Ensuite fetch la diff locale
+  try {
+    const resDiff = await fetch(`/api/points-diff/${wallet}`);
+    const diffData = await resDiff.json();
+
+    const diff = diffData?.diff;
+    const diffText = typeof diff === "number"
+      ? ` (${diff >= 0 ? "+" : ""}${Math.round(diff).toLocaleString()})`
+      : "";
+
+    document.getElementById("points").textContent = `Points : ${points.toLocaleString()}${diffText}`;
+  } catch (err) {
+    document.getElementById("points").textContent = `Points : ${points.toLocaleString()} (diff. err)`;
+  }
 }
 
 async function fetchPositions(wallet) {
