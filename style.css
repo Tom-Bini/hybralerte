@@ -539,3 +539,11 @@ footer#support code {
   background-size: 250% 100%;
   background-repeat: no-repeat;
 }
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100%;
+  display: block;
+  margin-top: 20px;
+}
