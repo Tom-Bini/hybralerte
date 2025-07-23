@@ -101,6 +101,30 @@ def top1000_history():
     conn.close()
     return jsonify([{"timestamp": row["timestamp"], "points": row["total_points"]} for row in rows])
 
+@app.route("/api/user-percentage-history/<address>")
+def user_percentage_history(address):
+    conn = get_db_connection()
+    query = """
+        SELECT 
+            w.timestamp,
+            w.total_points AS user_points,
+            t.total_points AS top1000_points
+        FROM wallet_stats w
+        JOIN top_1000_history t ON w.timestamp = t.timestamp
+        WHERE w.address = ?
+        ORDER BY w.timestamp
+    """
+    rows = conn.execute(query, (address.lower(),)).fetchall()
+    conn.close()
+
+    return jsonify([
+        {
+            "timestamp": row["timestamp"],
+            "percentage": (row["user_points"] / row["top1000_points"]) * 100 if row["top1000_points"] else 0
+        }
+        for row in rows
+    ])
+
 
 
 if __name__ == '__main__':

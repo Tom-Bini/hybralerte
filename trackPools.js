@@ -113,6 +113,50 @@ async function fetchAndDrawRankHistory(wallet) {
   });
 }
 
+async function fetchAndDrawUserPercentage(wallet) {
+    try {
+        const res = await fetch(`/api/user-percentage-history/${wallet}`);
+        const history = await res.json();
+
+        const labels = history.map(entry =>
+            new Date(entry.timestamp).toLocaleString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+        );
+        const data = history.map(entry => entry.percentage);
+
+        const ctx = document.getElementById('userPercentageChart').getContext('2d');
+
+        if (window.userPercentageChart && typeof window.userPercentageChart.destroy === 'function') {
+            window.userPercentageChart.destroy();
+        }
+
+        window.userPercentageChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: '% des points du wallet sur top 1000',
+                    data,
+                    borderColor: 'purple',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => value.toFixed(2) + '%'
+                        }
+                    }
+                }
+            }
+        });
+    } catch (err) {
+        console.error("Erreur fetch userPercentageChart :", err);
+    }
+}
+
 
 async function fetchPositions(wallet) {
   const payload = {
@@ -176,6 +220,7 @@ async function startMonitoring() {
   scheduleHourlyPointsUpdate(wallet);
   fetchAndDrawHistory(wallet);
   fetchAndDrawRankHistory(wallet);
+  fetchAndDrawUserPercentage(wallet);
   const sound = document.getElementById("alertSound");
 
   if (!wallet) {
