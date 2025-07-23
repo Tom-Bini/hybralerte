@@ -50,8 +50,15 @@ def main():
 
 def fix_permissions():
     try:
-        os.chown(DB_PATH, 33, 33)  # www-data uid/gid souvent = 33
+        os.chown(DB_PATH, 33, 33)
         os.chmod(DB_PATH, 0o664)
+
+        for ext in [".db-wal", ".db-shm"]:
+            path = DB_PATH + ext
+            if os.path.exists(path):
+                os.chown(path, 33, 33)
+                os.chmod(path, 0o664)
+
         print("🛠️ Permissions corrigées.")
     except Exception as e:
         print(f"⚠️ Impossible de changer les permissions : {e}")
