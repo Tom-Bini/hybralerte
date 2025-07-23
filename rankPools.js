@@ -1,5 +1,3 @@
-const hiddenPoolsSet = new Set();
-
 async function updatePoolsTable() {
     console.log("⏳ updatePoolsTable called...");
     const rangePercent = getCurrentRangePercent();
@@ -141,33 +139,26 @@ async function updatePoolsTable() {
 
 
     const tbody = document.querySelector("#poolTable tbody");
-    const hiddenTbody = document.querySelector("#hiddenPoolTable tbody");
     tbody.innerHTML = "";
-    hiddenTbody.innerHTML = "";
 
     ranked.forEach((p, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-                <td>${index + 1}</td>
-                <td class="pair-cell">
-                    <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank" class="pair-name">${p.symbol}</a>
-                    <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" class="chart-link">
-                        <img src="dexscreener-icon.png" alt="Chart" class="chart-icon" />
-                    </a>
-                </td>
-                <td>${p.boost}</td>
-                <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
-                <td>${(p.score * 1e6).toFixed(2)}</td>
+            <td>${index + 1}</td>
+            <td class="pair-cell">
+                <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank" class="pair-name">${p.symbol}</a>
+                <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" class="chart-link">
+                <img src="dexscreener-icon.png" alt="Chart" class="chart-icon" />
+                </a>
+            </td>
+            <td>${p.boost}</td>
+            <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+            <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
+            <td>${(p.score * 1e6).toFixed(2)}</td>
             `;
 
-        if (hiddenPoolsSet.has(p.id)) {
-            hiddenTbody.appendChild(row);
-        } else {
-            tbody.appendChild(row);
-        }
+        tbody.appendChild(row);
     });
-
 
     document.getElementById("lastUpdate").textContent =
         "Last update : " + new Date().toLocaleTimeString();
@@ -180,15 +171,3 @@ setInterval(updatePoolsTable, 60 * 1000);
 
 // Export global pour rangeSwitcher
 window.updatePoolsTable = updatePoolsTable;
-
-document.addEventListener("click", function (e) {
-    if (e.target.classList.contains("hide-btn")) {
-        const poolId = e.target.dataset.id;
-        if (hiddenPoolsSet.has(poolId)) {
-            hiddenPoolsSet.delete(poolId);
-        } else {
-            hiddenPoolsSet.add(poolId);
-        }
-        updatePoolsTable(); // Re-render les tableaux
-    }
-});
