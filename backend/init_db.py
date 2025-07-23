@@ -12,4 +12,4 @@ c.execute('''
 
 conn.commit()
 conn.close()
-print("✅ Table `user_wallets` créée avec succès.")
+print("✅ Table `wallets` créée avec succès.")
