@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            const res = await fetch("https://api.hybralerte.rouplou.dev/api/submit", { // adapte l'URL à ton backend
+            const res = await fetch("https://hybralerte.rouplou.dev/api/submit", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

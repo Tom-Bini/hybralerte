@@ -28,7 +28,9 @@ def submit():
     """)
     try:
         c.execute("INSERT OR IGNORE INTO wallets (address, created_at) VALUES (?, ?)", (address, timestamp))
+        print(f"[+] New address stored: {address} at {timestamp}")
     except sqlite3.IntegrityError:
+        print(f"[=] Address already present: {address}")
         pass
     conn.commit()
     conn.close()
