@@ -59,7 +59,7 @@ async function fetchAndDrawHistory(wallet) {
         label: 'Points',
         data,
         fill: false,
-        borderColor: 'blue',
+        borderColor: '#22C55E',
         tension: 0.1
       }]
     },
