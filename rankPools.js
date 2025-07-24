@@ -173,6 +173,7 @@ async function fetchAndDrawTop1000History() {
             const d = new Date(entry.timestamp);
             return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:00`;
         });
+
         const data = history.map(entry => entry.points);
 
         const ctx = document.getElementById('top1000Chart').getContext('2d');
@@ -195,7 +196,14 @@ async function fetchAndDrawTop1000History() {
             },
             options: {
                 scales: {
-                    y: { beginAtZero: false }
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return (value / 1_000_000).toLocaleString() + ' M';
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -203,6 +211,7 @@ async function fetchAndDrawTop1000History() {
         console.error("Erreur fetch top1000History :", err);
     }
 }
+
 
 fetchAndDrawTop1000History();
 setInterval(fetchAndDrawTop1000History, 60 * 60 * 1000); // maj toutes les heures
