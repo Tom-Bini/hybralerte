@@ -38,6 +38,17 @@ async function fetchAndDrawHistory(wallet) {
   const res = await fetch(`/api/points-history/${wallet}`);
   const history = await res.json();
 
+  const last = history.at(-1)?.percentage ?? null;
+  const previous = history.length >= 2 ? history.at(-2).percentage : null;
+
+  let infoText = "";
+  if (last !== null) {
+    const diff = previous !== null ? (last - previous).toFixed(2) : null;
+    infoText = `Last: ${last.toFixed(2)}%` + (diff !== null ? ` (${diff >= 0 ? '+' : ''}${diff}%)` : "");
+    document.getElementById("userPercentageInfo").textContent = infoText;
+  }
+
+
   const labels = history.map(entry => {
     const d = new Date(entry.timestamp);
     return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:00`;
