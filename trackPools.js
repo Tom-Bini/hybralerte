@@ -10,7 +10,7 @@ async function fetchPoints(wallet) {
   });
 
   if (!res.ok) {
-    document.getElementById("points").textContent = "⚠️ Erreur lors du chargement des points";
+    document.getElementById("points").textContent = "⚠️ Error while loading points";
     return;
   }
 
@@ -134,7 +134,7 @@ async function fetchAndDrawUserPercentage(wallet) {
             data: {
                 labels,
                 datasets: [{
-                    label: '% des points du wallet sur top 1000',
+                    label: '% of the wallets points compared to top 1000',
                     data,
                     borderColor: 'purple',
                     fill: false,

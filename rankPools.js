@@ -185,7 +185,7 @@ async function fetchAndDrawTop1000History() {
             data: {
                 labels,
                 datasets: [{
-                    label: 'Points cumulés du top 1000',
+                    label: 'Cumulated points of top 1000',
                     data,
                     borderColor: 'green',
                     fill: false,
