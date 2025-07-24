@@ -124,7 +124,7 @@ async function fetchAndDrawUserPercentage(wallet) {
     let infoText = "";
     if (last !== null) {
       const diff = previous !== null ? (last - previous).toFixed(2) : null;
-      infoText = `Last: ${last.toFixed(2)}%` + (diff !== null ? ` (${diff >= 0 ? '+' : ''}${diff}%)` : "");
+      infoText = `Last: ${last.toFixed(4)}%` + (diff !== null ? ` (${diff >= 0 ? '+' : ''}${diff}%)` : "");
       document.getElementById("userPercentageInfo").textContent = infoText;
     }
 
