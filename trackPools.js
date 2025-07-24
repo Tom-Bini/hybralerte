@@ -135,7 +135,7 @@ async function fetchAndDrawUserPercentage(wallet) {
       data: {
         labels,
         datasets: [{
-          label: '% of the wallets points compared to top 1000',
+          label: '% of the wallet points compared to top 1000',
           data,
           borderColor: 'purple',
           fill: false,
