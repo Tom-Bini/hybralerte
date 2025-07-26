@@ -105,8 +105,14 @@ async function fetchAndDrawRankHistory(wallet) {
     options: {
       scales: {
         y: {
-          reverse: true, // car un meilleur rank = valeur plus basse
-          beginAtZero: false
+          reverse: true,
+          beginAtZero: false,
+          ticks: {
+            stepSize: 1,
+            callback: function (value) {
+              return Math.round(value);
+            }
+          }
         }
       }
     }
