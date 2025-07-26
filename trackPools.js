@@ -167,7 +167,7 @@ async function fetchAndDrawUserPercentage(wallet) {
           y: {
             beginAtZero: true,
             ticks: {
-              callback: value => value.toFixed(2) + '%'
+              callback: value => value.toFixed(4) + '%'
             }
           }
         }
