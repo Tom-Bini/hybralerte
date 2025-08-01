@@ -55,7 +55,31 @@ h1 {
   padding: 1.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+#left, #right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
 
+/* largeur 35% à gauche, reste à droite */
+#left {
+  flex: 0 0 35%;
+}
+
+#right {
+  flex: 1;
+}
+
+/* Sur petit écran, on empile */
+@media (max-width: 1000px) {
+  #container {
+    flex-direction: column;
+  }
+  #left, #right {
+    flex: 1 0 auto; /* largeur auto quand empilé */
+  }
+}
 #poolTable {
   width: 100%;
   border-collapse: collapse;
@@ -257,7 +281,7 @@ button:hover {
   gap: 0.5rem;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 300px;
+  width: 100%;
 }
 
 .pair-name {
@@ -554,4 +578,8 @@ canvas {
   text-align: center;
   margin-top: 3rem;
   margin-bottom: 1rem;
+}
+
+#minFees {
+  width: 75px;
 }
