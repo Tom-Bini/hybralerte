@@ -243,6 +243,7 @@ function scheduleHourlyPointsUpdate(wallet) {
 }
 
 async function startMonitoring() {
+  const mutedPositions = new Set();
   const wallet = document.getElementById("wallet").value.trim();
   scheduleHourlyPointsUpdate(wallet);
   fetchAndDrawHistory(wallet);
@@ -267,8 +268,8 @@ async function startMonitoring() {
     }
 
     for (const pos of positions) {
-      const tickLower = parseInt(pos.tickLower);
-      const tickUpper = parseInt(pos.tickUpper);
+      const tickLower = parseInt(pos.tickLower.tickIdx);
+      const tickUpper = parseInt(pos.tickUpper.tickIdx);
       const currentTick = parseInt(pos.pool.tick);
       const symbol0 = pos.pool.token0.symbol;
       const symbol1 = pos.pool.token1.symbol;
@@ -281,12 +282,10 @@ async function startMonitoring() {
       const card = document.createElement("div");
       card.className = "position-card" + (inRange ? " in-range" : " out-range");
       card.innerHTML = `
-            <div class='pair'><b>${symbol0}/${symbol1}</b> <span class='pool-id'>(id: ${poolId})</span></div>
-            <div>Range : <b>${tickLower}</b> → <b>${tickUpper}</b></div>
-            <div>Current tick : <b>${currentTick}</b></div>
-            <div class='status'>${inRange ? "✅ In range" : "🆘 Out of range"}</div>
-          `;
-      card.innerHTML += `
+        <div class='pair'><b>${symbol0}/${symbol1}</b> <span class='pool-id'>(id: ${poolId})</span></div>
+        <div>Range : <b>${tickLower}</b> → <b>${tickUpper}</b></div>
+        <div>Current tick : <b>${currentTick}</b></div>
+        <div class='status'>${inRange ? "✅ In range" : "🆘 Out of range"}</div>
         <div class="range-bar">
           <div class="segment red"></div>
           <div class="segment orange"></div>
@@ -295,12 +294,52 @@ async function startMonitoring() {
           <div class="segment red"></div>
           <div class="cursor" style="left: ${Math.max(0, Math.min(10 + (percentage * 0.8), 120))}%"></div>
         </div>
-        <a href="https://www.hybra.finance/liquidity/manage/${poolId}" target="_blank" class="position-btn">
-          Position
-        </a>
       `;
+      card.className = "position-card" + (inRange ? " in-range" : " out-range");
+      card.style.position = "relative"; // <--- IMPORTANT
+      const positionLink = document.createElement("a");
+      positionLink.href = "https://www.prjx.com/portfolio";
+      positionLink.target = "_blank";
+      positionLink.className = "position-btn";
+      positionLink.textContent = "Position";
+      positionLink.style.display = "inline-block";
+      positionLink.style.marginTop = "5px";
+
+      // Bouton Mute (en haut à droite)
+      const muteButton = document.createElement("button");
+      muteButton.className = "mute-btn";
+      muteButton.style.position = "absolute";
+      muteButton.style.bottom = "15px";
+      muteButton.style.right = "20px";
+
+      // Si la position est déjà dans mutedPositions → afficher rouge + icône mute
+      if (mutedPositions.has(poolId)) {
+        muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        muteButton.style.backgroundColor = "#EF4444";
+      } else {
+        muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+        muteButton.style.backgroundColor = "#22C55E";
+      }
+
+      muteButton.onclick = () => {
+        if (mutedPositions.has(poolId)) {
+          mutedPositions.delete(poolId);
+          muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+          muteButton.style.backgroundColor = "#22C55E";
+        } else {
+          mutedPositions.add(poolId);
+          muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+          muteButton.style.backgroundColor = "#EF4444";
+        }
+      };
+
+      // Ajout dans la carte
+      card.appendChild(muteButton);
+      card.appendChild(positionLink);
       positionsContainer.appendChild(card);
-      if (!inRange || (warnNear && nearOut)) {
+
+      // Son si pas mute
+      if (!mutedPositions.has(poolId) && (!inRange || (warnNear && nearOut))) {
         sound.play();
       }
     }
