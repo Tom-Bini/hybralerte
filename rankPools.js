@@ -4,7 +4,7 @@ async function updatePoolsTable() {
 
     const graphQLEndpoint = "https://api.goldsky.com/api/public/project_cmbj707z4cd9901sib1f6cu0c/subgraphs/hybra-v3/v3/gn";
     const pointsEndpoint = "https://server.hybra.finance/api/points/pool-config/getAllPoolConfigs";
-
+    const v2Endpoint = "https://api.goldsky.com/api/public/project_cmavyufix18br01tv219kbmxo/subgraphs/hybra-v2/release/gn";
     const graphQLPayload = {
         operationName: "GetV3Pools",
         variables: {
@@ -29,12 +29,15 @@ async function updatePoolsTable() {
             liquidityGross
             liquidityNet
           }
+          poolHourData(first: 2, orderBy: periodStartUnix, orderDirection: desc) {
+            periodStartUnix
+            feesUSD
+          }
         }
       }
     `
     };
 
-    // Helpers
     const getPriceFromSqrtPriceX96 = (sqrtX96) => {
         return (parseFloat(sqrtX96) / (2 ** 96)) ** 2;
     };
@@ -61,14 +64,29 @@ async function updatePoolsTable() {
             }
         })
     ]);
+    const boostedPairs = [
+        "WHYPE/kHYPE",
+        "WHYPE/wstHYPE",
+        "USDHL/USD₮0",
+        "WHYPE/LHYPE",
+        "hbUSDT/USD₮0",
+        "USD₮0/USDXL",
+        "feUSD/USD₮0",
+        "WHYPE/hbHYPE",
+        "WHYPE/mHYPE"
+    ];
+
 
     const data1 = await res1.json();
     const pools = data1?.data?.pools || [];
+
     const boosts = await res2.json();
 
     const mergedPools = pools.map(pool => {
         const boostEntry = boosts.find(b => b.poolAddress.toLowerCase() === pool.id.toLowerCase());
-        const boost = boostEntry?.pointsBoost ?? 0;
+        const hasBoost = boostedPairs.includes(`${pool.token0.symbol}/${pool.token1.symbol}`);
+
+        const boost = hasBoost ? 3 : 1;
         const tvlUSD = parseFloat(pool.totalValueLockedUSD);
         const ticks = pool.ticks ?? [];
 
@@ -106,7 +124,12 @@ async function updatePoolsTable() {
 
 
         const effectiveTVL = tvlUSD * proportion;
-        const score = effectiveTVL > 0 ? boost / effectiveTVL : 0;
+
+        const feesUSD = pool.poolHourData?.[1]?.feesUSD
+            ? parseFloat(pool.poolHourData[1].feesUSD)
+            : 0;
+
+        const score = effectiveTVL > 0 ? (feesUSD * boost) / effectiveTVL : 0;
 
         const token0Addr = boostEntry?.token0Address;
         const token1Addr = boostEntry?.token1Address;
@@ -119,6 +142,7 @@ async function updatePoolsTable() {
             feeTier: parseInt(pool.feeTier),
             tvlUSD,
             boost,
+            feesUSD,
             effectiveTVL,
             tvlRatio: proportion,
             score,
@@ -144,19 +168,19 @@ async function updatePoolsTable() {
     ranked.forEach((p, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${index + 1}</td>
-            <td class="pair-cell">
-                <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank" class="pair-name">${p.symbol}</a>
-                <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" class="chart-link">
-                <img src="dexscreener-icon.png" alt="Chart" class="chart-icon" />
-                </a>
-            </td>
-            <td>${p.boost}</td>
-            <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-            <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
-            <td>${(p.score * 1e6).toFixed(2)}</td>
-            `;
-
+        <td>${index + 1}</td>
+        <td class="pair-cell">
+            <a href="https://www.hybra.finance/liquidity/add?token0=${p.token0Address}&token1=${p.token1Address}&fee=${p.feeTier}&type=${p.protocolType}" target="_blank" class="pair-name">${p.symbol}</a>
+            <a href="https://dexscreener.com/hyperevm/${p.id}" target="_blank" class="chart-link">
+            <img src="dexscreener-icon.png" alt="Chart" class="chart-icon" />
+            </a>
+        </td>
+        <td>${p.boost}</td>
+        <td>${p.feesUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+        <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+        <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
+        <td>${(p.score * 1e6).toFixed(2)}</td>
+    `;
         tbody.appendChild(row);
     });
 
@@ -199,7 +223,7 @@ async function fetchAndDrawTop1000History() {
                     y: {
                         beginAtZero: false,
                         ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                                 return (value / 1_000_000).toLocaleString() + ' M';
                             }
                         }
