@@ -283,8 +283,8 @@ async function startMonitoring() {
     }
 
     for (const pos of positions) {
-      const tickLower = parseInt(pos.tickLower.tickIdx);
-      const tickUpper = parseInt(pos.tickUpper.tickIdx);
+      const tickLower = parseInt(pos.tickLower);
+      const tickUpper = parseInt(pos.tickUpper);
       const currentTick = parseInt(pos.pool.tick);
       const symbol0 = pos.pool.token0.symbol;
       const symbol1 = pos.pool.token1.symbol;
@@ -313,7 +313,7 @@ async function startMonitoring() {
       card.className = "position-card" + (inRange ? " in-range" : " out-range");
       card.style.position = "relative"; // <--- IMPORTANT
       const positionLink = document.createElement("a");
-      positionLink.href = "https://www.prjx.com/portfolio";
+      positionLink.href = 'https://www.hybra.finance/liquidity/manage/${poolId}" target="_blank" class="position-btn';
       positionLink.target = "_blank";
       positionLink.className = "position-btn";
       positionLink.textContent = "Position";
