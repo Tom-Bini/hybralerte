@@ -313,7 +313,7 @@ async function startMonitoring() {
       card.className = "position-card" + (inRange ? " in-range" : " out-range");
       card.style.position = "relative"; // <--- IMPORTANT
       const positionLink = document.createElement("a");
-      positionLink.href = 'https://www.hybra.finance/liquidity/manage/${poolId}" target="_blank" class="position-btn';
+      positionLink.href = `https://www.hybra.finance/liquidity/manage/${poolId}" target="_blank" class="position-btn`;
       positionLink.target = "_blank";
       positionLink.className = "position-btn";
       positionLink.textContent = "Position";
