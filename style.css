@@ -547,3 +547,11 @@ canvas {
   display: block;
   margin-top: 20px;
 }
+
+#siteTitle {
+  font-size: 3.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
