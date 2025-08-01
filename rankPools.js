@@ -179,7 +179,7 @@ async function updatePoolsTable() {
         <td>${p.feesUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}$</td>
         <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}$</td>
         <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
-        <td>${(p.score * 1e6)}</td>
+        <td>${(p.score * 1e6).toFixed(0)}</td>
     `;
         tbody.appendChild(row);
     });
