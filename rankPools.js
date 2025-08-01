@@ -175,11 +175,11 @@ async function updatePoolsTable() {
             <img src="dexscreener-icon.png" alt="Chart" class="chart-icon" />
             </a>
         </td>
-        <td>${p.boost}</td>
-        <td>${p.feesUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-        <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+        <td>x${p.boost}</td>
+        <td>${p.feesUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}$</td>
+        <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}$</td>
         <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
-        <td>${(p.score * 1e6).toFixed(2)}</td>
+        <td>${(p.score * 1e6)}</td>
     `;
         tbody.appendChild(row);
     });
