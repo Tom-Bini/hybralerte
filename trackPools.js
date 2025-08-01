@@ -248,9 +248,24 @@ async function startMonitoring() {
   scheduleHourlyPointsUpdate(wallet);
   fetchAndDrawHistory(wallet);
   fetchAndDrawRankHistory(wallet);
-  fetchAndDrawUserPercentage(wallet);
   const sound = document.getElementById("alertSound");
+  const volumeSlider = document.getElementById("volumeSlider");
+  const volumeIcon = document.getElementById("volumeIcon");
 
+  // Init volume
+  sound.volume = volumeSlider.value;
+
+  // Changer le volume et l’icône
+  volumeSlider.addEventListener("input", () => {
+    sound.volume = volumeSlider.value;
+    if (volumeSlider.value == 0) {
+      volumeIcon.className = "fas fa-volume-mute";
+    } else if (volumeSlider.value < 0.5) {
+      volumeIcon.className = "fas fa-volume-down";
+    } else {
+      volumeIcon.className = "fas fa-volume-up";
+    }
+  });
   if (!wallet) {
     alert("Entre une adresse de wallet");
     return;
