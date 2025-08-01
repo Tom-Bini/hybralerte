@@ -248,6 +248,7 @@ async function startMonitoring() {
   scheduleHourlyPointsUpdate(wallet);
   fetchAndDrawHistory(wallet);
   fetchAndDrawRankHistory(wallet);
+  fetchAndDrawUserPercentage(wallet);
   const sound = document.getElementById("alertSound");
   const volumeSlider = document.getElementById("volumeSlider");
   const volumeIcon = document.getElementById("volumeIcon");
