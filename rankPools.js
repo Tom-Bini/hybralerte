@@ -1,3 +1,19 @@
+// Fonction pour reconnaître une pool stable
+function isStablePool(symbol) {
+    const stables = [
+        "WHYPE/kHYPE",
+        "WHYPE/wstHYPE",
+        "USDHL/USD₮0",
+        "WHYPE/LHYPE",
+        "hbUSDT/USD₮0",
+        "USD₮0/USDXL",
+        "feUSD/USD₮0",
+        "WHYPE/hbHYPE",
+        "WHYPE/mHYPE"
+    ];
+    return stables.some(s => symbol.includes(s));
+}
+
 async function updatePoolsTable() {
     console.log("⏳ updatePoolsTable called...");
     const rangePercent = getCurrentRangePercent();
@@ -64,6 +80,7 @@ async function updatePoolsTable() {
             }
         })
     ]);
+
     const boostedPairs = [
         "WHYPE/kHYPE",
         "WHYPE/wstHYPE",
@@ -99,7 +116,6 @@ async function updatePoolsTable() {
             const tickMin = getTickFromPrice(minPrice);
             const tickMax = getTickFromPrice(maxPrice);
 
-            // On suppose maintenant que `liquidityNet` est bien présent dans les ticks
             const sortedTicks = [...ticks].sort((a, b) => parseInt(a.tickIdx) - parseInt(b.tickIdx));
 
             let activeLiquidity = 0;
@@ -108,7 +124,7 @@ async function updatePoolsTable() {
 
             for (const tick of sortedTicks) {
                 const tickIdx = parseInt(tick.tickIdx);
-                const liqNet = parseFloat(tick.liquidityNet ?? 0);  // <= il faut que ta requête GraphQL inclue ce champ maintenant
+                const liqNet = parseFloat(tick.liquidityNet ?? 0);
                 activeLiquidity += liqNet;
 
                 const liqAbs = Math.abs(activeLiquidity);
@@ -129,13 +145,12 @@ async function updatePoolsTable() {
             ? parseFloat(pool.poolHourData[1].feesUSD)
             : 0;
 
-        const score = effectiveTVL > 0 ? (feesUSD * boost) / effectiveTVL : 0;
+        const efficiency = effectiveTVL > 0 ? (feesUSD * boost) / effectiveTVL : 0;
 
         const token0Addr = boostEntry?.token0Address;
         const token1Addr = boostEntry?.token1Address;
         const protocolType = boostEntry?.protocolType ?? "v3";
         const fee = boostEntry?.feeTier;
-
         return {
             id: pool.id,
             symbol: `${pool.token0.symbol}/${pool.token1.symbol}`,
@@ -145,11 +160,39 @@ async function updatePoolsTable() {
             feesUSD,
             effectiveTVL,
             tvlRatio: proportion,
-            score,
+            efficiency,
             token0Address: token0Addr,
             token1Address: token1Addr,
             protocolType
         };
+    });
+
+    const totalAll = mergedPools.reduce((sum, p) => sum + p.efficiency, 0);
+    const totalStable = mergedPools
+        .filter(p => isStablePool(p.symbol))
+        .reduce((sum, p) => sum + p.efficiency, 0);
+
+    const efficienciesValues = mergedPools.map(p => p.efficiency).filter(e => e > 0);
+    const sortedEff = [...efficienciesValues].sort((a, b) => a - b);
+    const medianEff = sortedEff[Math.floor(sortedEff.length / 2)];
+
+    const maxAllowedEff = medianEff * 1000;
+
+    const totalAllFiltered = mergedPools
+        .filter(p => p.efficiency <= maxAllowedEff)
+        .reduce((sum, p) => sum + p.efficiency, 0);
+
+    mergedPools.forEach(p => {
+        let pointsAll;
+
+        pointsAll = totalAllFiltered > 0 ? (p.efficiency / totalAllFiltered) * 100_000 : 0;
+
+        let pointsStable = 0;
+        if (isStablePool(p.symbol) && totalStable > 0) {
+            pointsStable = (p.efficiency / totalStable) * 10_000;
+        }
+
+        p.score = pointsAll + pointsStable;
     });
 
     const excludeLowTVL = document.getElementById("excludeLowTVL").checked;
@@ -176,10 +219,10 @@ async function updatePoolsTable() {
             </a>
         </td>
         <td>x${p.boost}</td>
-        <td>${p.feesUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}$</td>
+        <td>${p.feesUSD.toLocaleString(undefined, { maximumFractionDigits: 2 })}$</td>
         <td>${p.tvlUSD.toLocaleString(undefined, { maximumFractionDigits: 0 })}$</td>
         <td>${(p.tvlRatio * 100).toFixed(2)}%</td>
-        <td>${(p.score * 1e6).toFixed(0)}</td>
+        <td>${(p.score).toFixed(0)}</td>
     `;
         tbody.appendChild(row);
     });
