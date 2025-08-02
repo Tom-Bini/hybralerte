@@ -66,14 +66,14 @@
                 <button onclick="setRange(0.5)">±0.5%</button>
             </div>
             <div id="settingsButtons">
-                <label for="minFees">Min Fees 24h :</label>
+                <label for="minFees">Min Fees 1h :</label>
                 <select id="minFees" onchange="updatePoolsTable()">
                     <option value="0">No filter</option>
+                    <option value="5" selected>5$</option>
                     <option value="10">10$</option>
-                    <option value="50" selected>50$</option>
+                    <option value="25">25$</option>
+                    <option value="50">50$</option>
                     <option value="100">100$</option>
-                    <option value="500">500$</option>
-                    <option value="1000">1000$</option>
                 </select>
                 <label class="switch">
                     <input type="checkbox" id="excludeLowTVL" onchange="updatePoolsTable()" checked>
