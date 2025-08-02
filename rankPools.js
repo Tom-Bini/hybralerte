@@ -273,6 +273,11 @@ async function fetchAndDrawTop1000History() {
                             }
                         }
                     }
+                },
+                elements: {
+                    point: {
+                        radius: 0
+                    }
                 }
             }
         });

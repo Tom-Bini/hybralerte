@@ -69,6 +69,11 @@ async function fetchAndDrawHistory(wallet) {
         y: {
           beginAtZero: false
         }
+      },
+      elements: {
+        point: {
+          radius: 0
+        }
       }
     }
   });
@@ -113,6 +118,11 @@ async function fetchAndDrawRankHistory(wallet) {
               return Math.round(value);
             }
           }
+        }
+      },
+      elements: {
+        point: {
+          radius: 0
         }
       }
     }
@@ -175,6 +185,11 @@ async function fetchAndDrawUserPercentage(wallet) {
             ticks: {
               callback: value => value.toFixed(4) + '%'
             }
+          }
+        },
+        elements: {
+          point: {
+            radius: 0
           }
         }
       }
