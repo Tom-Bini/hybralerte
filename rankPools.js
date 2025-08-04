@@ -99,6 +99,15 @@ async function updatePoolsTable() {
 
     const boosts = await res2.json();
 
+    const tickSpacingMap = {
+        100: 1,
+        150: 1,
+        200: 4,
+        2500: 50,
+        7500: 150,
+        10000: 200
+    };
+
     const mergedPools = pools.map(pool => {
         const boostEntry = boosts.find(b => b.poolAddress.toLowerCase() === pool.id.toLowerCase());
         const hasBoost = boostedPairs.includes(`${pool.token0.symbol}/${pool.token1.symbol}`);
@@ -111,10 +120,22 @@ async function updatePoolsTable() {
 
         if (rangePercent && pool.sqrtPrice) {
             const price = getPriceFromSqrtPriceX96(pool.sqrtPrice);
-            const minPrice = price * (1 - rangePercent / 100);
-            const maxPrice = price * (1 + rangePercent / 100);
-            const tickMin = getTickFromPrice(minPrice);
-            const tickMax = getTickFromPrice(maxPrice);
+
+            let tickMin, tickMax;
+
+            if (rangePercent === "tick") {
+                // Mode ±1 tick
+                const tickSpacing = tickSpacingMap[parseInt(pool.feeTier)] || 1;
+                const tickCurrent = getTickFromPrice(price);
+                tickMin = tickCurrent - tickSpacing;
+                tickMax = tickCurrent + tickSpacing;
+            } else {
+                // Mode % classique
+                const minPrice = price * (1 - rangePercent / 100);
+                const maxPrice = price * (1 + rangePercent / 100);
+                tickMin = getTickFromPrice(minPrice);
+                tickMax = getTickFromPrice(maxPrice);
+            }
 
             const sortedTicks = [...ticks].sort((a, b) => parseInt(a.tickIdx) - parseInt(b.tickIdx));
 
