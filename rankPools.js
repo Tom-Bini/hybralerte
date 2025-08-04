@@ -127,8 +127,9 @@ async function updatePoolsTable() {
                 // Mode ±1 tick
                 const tickSpacing = tickSpacingMap[parseInt(pool.feeTier)] || 1;
                 const tickCurrent = getTickFromPrice(price);
-                tickMin = tickCurrent - tickSpacing;
-                tickMax = tickCurrent + tickSpacing;
+                const deltaEntry = tickCurrent % tickSpacing;
+                tickMin = tickCurrent - deltaEntry;
+                tickMax = tickCurrent + tickSpacing - deltaEntry;
             } else {
                 // Mode % classique
                 const minPrice = price * (1 - rangePercent / 100);
