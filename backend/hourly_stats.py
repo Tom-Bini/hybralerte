@@ -24,7 +24,8 @@ def fetch_top_1000_total():
     for page in range(1, 11):
         try:
             res = requests.get(
-                f"https://server.hybra.finance/api/points/top/page?current={page}&pageSize=100"
+                f"https://server.hybra.finance/api/points/top/page?current={page}&pageSize=100",
+                verify=certifi.where(),  # ✅ correction ajoutée
             )
             records = res.json()["data"]["records"]
             page_total = sum(entry["totalPoints"] for entry in records)
