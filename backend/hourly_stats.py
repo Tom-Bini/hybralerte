@@ -1,8 +1,12 @@
 import sqlite3
-import requests
-import certifi
-from datetime import datetime, timezone
 import os
+import certifi
+
+os.environ["SSL_CERT_FILE"] = certifi.where()
+
+import requests
+from datetime import datetime, timezone
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "wallets.db")
@@ -89,6 +93,8 @@ def main():
         (timestamp, total_top_1000),
     )
     print(f"📊 Total points top 1000 : {total_top_1000:,.0f}")
+    now = datetime.now(timezone.utc)
+    print("Exec at " + now.isoformat())
 
     conn.commit()
     conn.close()
