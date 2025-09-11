@@ -1,9 +1,6 @@
 import sqlite3
 import os
 import certifi
-
-os.environ["SSL_CERT_FILE"] = certifi.where()
-
 import requests
 from datetime import datetime, timezone
 
